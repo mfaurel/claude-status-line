@@ -95,18 +95,13 @@ if (git(['rev-parse', '--git-dir'])) {
   }
 }
 
-// ── Context gauge ────────────────────────────────────────────────────────────
-const BLOCKS = 12;
-function contextGauge() {
-  if (usedPct == null || isNaN(usedPct)) {
-    return `${C.track}${'░'.repeat(BLOCKS)}${RESET} ${C.dim}--%${RESET}`;
-  }
-  const pct = Math.round(usedPct);
-  const filled = Math.min(BLOCKS, Math.round((pct * BLOCKS) / 100));
+// ── Gauge renderer (green→red gradient bar) ──────────────────────────────────
+function renderBar(pct, blocks) {
+  const filled = Math.min(blocks, Math.round((pct * blocks) / 100));
   let bar = '';
-  for (let i = 0; i < BLOCKS; i++) {
+  for (let i = 0; i < blocks; i++) {
     if (i < filled) {
-      const t = BLOCKS > 1 ? i / (BLOCKS - 1) : 0;
+      const t = blocks > 1 ? i / (blocks - 1) : 0;
       let r, g, b;
       if (t < 0.5) {
         const u = t * 2;
@@ -124,7 +119,18 @@ function contextGauge() {
       bar += `${C.track}░`;
     }
   }
-  bar += RESET;
+  return bar + RESET;
+}
+
+// ── Context gauge ────────────────────────────────────────────────────────────
+const BLOCKS = 10;
+const RL_BLOCKS = 8;
+function contextGauge() {
+  if (usedPct == null || isNaN(usedPct)) {
+    return `${C.track}${'░'.repeat(BLOCKS)}${RESET} ${C.dim}--%${RESET}`;
+  }
+  const pct = Math.round(usedPct);
+  const bar = renderBar(pct, BLOCKS);
 
   let emoji, pc;
   if (pct < 50) { emoji = '🟢'; pc = fg(46, 204, 113); }
@@ -184,15 +190,17 @@ if (sessionMs != null && !isNaN(sessionMs)) {
 }
 
 if (fiveHrPct != null && !isNaN(fiveHrPct)) {
+  const pct = Math.round(fiveHrPct);
   const rt = relTime(fiveHrReset);
-  let s = `📊 ${paint(`5h ${Math.round(fiveHrPct)}%`, C.fiveHr)}`;
+  let s = `📊 ${renderBar(pct, RL_BLOCKS)} ${paint(`5h ${pct}%`, C.fiveHr)}`;
   if (rt) s += `${C.dim}·${rt}${RESET}`;
   segments.push(s);
 }
 
 if (sevenDayPct != null && !isNaN(sevenDayPct)) {
+  const pct = Math.round(sevenDayPct);
   const rt = relTime(sevenDayReset);
-  let s = `📅 ${paint(`7d ${Math.round(sevenDayPct)}%`, C.sevenDay)}`;
+  let s = `📅 ${renderBar(pct, RL_BLOCKS)} ${paint(`7d ${pct}%`, C.sevenDay)}`;
   if (rt) s += `${C.dim}·${rt}${RESET}`;
   segments.push(s);
 }
