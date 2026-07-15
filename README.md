@@ -4,7 +4,7 @@ A stylish, modern, single-line status line for [Claude Code](https://claude.com/
 **standalone, zero dependencies, no plugins required.**
 
 ```
- claude-status-line  🌿 main  ▓▓▓▓░░░░ 42% 🟢  +12 -3  ⏱️ 8m  📊 5h 18%·1h59m  📅 7d 63%·2d23h  🤖 Opus 4.8
+ claude-status-line  🌿 main  ████░░░░░░ 42% 🟢  +12 -3  ⏱️ 8m  📊 █░░░░░░░ 5h 18%·1h59m  📅 █████░░░ 7d 63%·2d23h  🤖 Opus 4.8
 ```
 
 It's a single Node.js file (`statusline.js`). Node ships with Claude Code, so there is
@@ -17,11 +17,11 @@ macOS, Linux, and Windows.
 | --- | --- |
 | **repo** | Current repository / workspace name |
 | 🌿 branch | Git branch (or short SHA when detached) |
-| gauge | Context-window usage as a truecolor gradient bar + `%` + severity dot (🟢🟡🟠🔴) |
+| gauge | Context-window usage as a truecolor gradient bar (green→red) + `%` + severity dot (🟢🟡🟠🔴) |
 | `+ / -` | Uncommitted diff velocity vs `HEAD` (`clean` when none) |
 | ⏱️ time | Session duration |
-| 📊 5h | 5-hour rate-limit usage · time to reset |
-| 📅 7d | 7-day rate-limit usage · time to reset |
+| 📊 5h | 5-hour rate-limit usage as a gradient bar + `%` · time to reset |
+| 📅 7d | 7-day rate-limit usage as a gradient bar + `%` · time to reset |
 | 🤖 model | Active model |
 
 Segments hide themselves automatically when Claude Code doesn't provide that data.
@@ -64,8 +64,8 @@ Restart Claude Code (or run `/statusline`) to see it.
 
 Everything lives in `statusline.js`:
 
-- **Colors** — edit the `C` palette object (truecolor RGB).
-- **Gauge width** — change `BLOCKS` (default `12`).
+- **Colors** — edit the `C` palette object (truecolor RGB), or the gradient stops in `renderBar`.
+- **Gauge width** — change `BLOCKS` (context gauge, default `10`) or `RL_BLOCKS` (rate-limit gauges, default `8`).
 - **Icons** — swap the emoji in the "Build segments" section.
 - **Segments** — comment out any block you don't want.
 
